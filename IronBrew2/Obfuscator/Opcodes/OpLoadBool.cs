@@ -9,7 +9,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.LoadBool && instruction.C == 0;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Stk[Inst[OP_A]]=(Inst[OP_B]~=0);";
+			"Stk[Inst[D9_OP_A]]=(Inst[D9_OP_B]~=0);";
 	}
 	
 	public class OpLoadBoolC : VOpcode
@@ -18,7 +18,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.LoadBool && instruction.C != 0;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Stk[Inst[OP_A]]=(Inst[OP_B]~=0);InstrPoint=InstrPoint+1;";
+			"Stk[Inst[D9_OP_A]]=(Inst[D9_OP_B]~=0);InstrPoint=InstrPoint+1;";
 
 		public override void Mutate(Instruction ins) =>
 			ins.C = 0;

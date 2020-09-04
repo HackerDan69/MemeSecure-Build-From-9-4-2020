@@ -8,7 +8,7 @@ namespace IronBrew2.Bytecode_Library.Bytecode
 	public class VanillaSerializer
 	{
 		private Chunk _chunk;
-		private Encoding _fuckingLua = Encoding.GetEncoding(28591);
+		private Encoding _fuckingLua = Encoding.GetEncoding(28596);
 
 		public VanillaSerializer(Chunk chunk) =>
 			_chunk = chunk;

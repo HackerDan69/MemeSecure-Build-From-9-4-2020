@@ -1,8 +1,33 @@
+using System;
+using System.Text;
+
 namespace IronBrew2.Obfuscator.VM_Generation
 {
 	public static class VMStrings
-	{
-		public static string VMP1 = @"
+    {
+
+        static char[] charactersAvailable = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                                             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+        public static string GetRandomAlphaNumString(uint stringLength)
+        {
+            StringBuilder randomString = new StringBuilder();
+
+            Random randomCharacter = new Random();
+
+            for (uint i = 0; i < stringLength; i++)
+            {
+                int randomCharSelected = randomCharacter.Next(0, (charactersAvailable.Length - 1));
+
+                randomString.Append(charactersAvailable[randomCharSelected]);
+            }
+
+            return randomString.ToString();
+        }
+
+        public static string VMP1 = "local coolkidskey = '" + GetRandomAlphaNumString(1000) + "'" + @"
+local bitchnigga = ToNumber(decodebase64('XOR_KEY'))
+local EEEE = {[1] = 'illegal',[2] = 'illegal',[3] = 'illegal',[4] = 'illegal',[5] = 'illegal',[6] = 'illegal',[7] = 'illegal',[10] = 'illegal',[11] = 'illegal',[12] = 'illegal',[13] = 'illegal',[14] = 'illegal',[15] = 'illegal',[16] = 'illegal',[17] = 'illegal',[18] = 'illegal',[19] = 'illegal',[20] = 'illegal'}
 local BitXOR = bit and bit.bxor or function(a,b)
     local p,c=1,0
     while a>0 and b>0 do
@@ -34,17 +59,17 @@ local Pos = 1;
 local function gBits32()
     local W, X, Y, Z = Byte(ByteString, Pos, Pos + 3);
 
-	W = BitXOR(W, XOR_KEY)
-	X = BitXOR(X, XOR_KEY)
-	Y = BitXOR(Y, XOR_KEY)
-	Z = BitXOR(Z, XOR_KEY)
+	W = BitXOR(W, 1*bitchnigga*0xD9ED/0xD9ED)
+	X = BitXOR(X, 1*bitchnigga*0xD9ED/0xD9ED)
+	Y = BitXOR(Y, 1*bitchnigga*0xD9ED/0xD9ED)
+	Z = BitXOR(Z, 1*bitchnigga*0xD9ED/0xD9ED)
 
     Pos	= Pos + 4;
     return (Z*16777216) + (Y*65536) + (X*256) + W;
 end;
 
 local function gBits8()
-    local F = BitXOR(Byte(ByteString, Pos, Pos), XOR_KEY);
+    local F = BitXOR(Byte(ByteString, Pos, Pos), 1*bitchnigga*2/2);
     Pos = Pos + 1;
     return F;
 end;
@@ -52,8 +77,8 @@ end;
 local function gBits16()
     local W, X = Byte(ByteString, Pos, Pos + 2);
 
-	W = BitXOR(W, XOR_KEY)
-	X = BitXOR(X, XOR_KEY)
+	W = BitXOR(W, bitchnigga)
+	X = BitXOR(X, bitchnigga)
 
     Pos	= Pos + 2;
     return (X*256) + W;
@@ -95,7 +120,7 @@ local function gString(Len)
 
 	local FStr = {}
 	for Idx = 1, #Str do
-		FStr[Idx] = Char(BitXOR(Byte(Sub(Str, Idx, Idx)), XOR_KEY))
+		FStr[Idx] = Char(BitXOR(Byte(Sub(Str, Idx, Idx)), 1*bitchnigga*2/2))
 	end
 
     return Concat(FStr);
@@ -103,6 +128,9 @@ end;
 
 local gInt = gBits32;
 local function _R(...) return {...}, Select('#', ...) end
+local function rsh(value,shift)
+	return math.floor(value/2^shift) % 256
+end
 
 local function Deserialize()
     local Instrs = {};
@@ -110,11 +138,14 @@ local function Deserialize()
 	local Lines = {};
     local Chunk = 
 	{
-		Instrs,
-		Functions,
+		{[1]={[1]=Instrs}},
+		{[1]={[1]=Functions}},
 		nil,
-		Lines
+		Lines,
+        nil,
+    
 	};
+
 	local ConstCount = gBits32()
     local Consts = {}
 
@@ -129,17 +160,23 @@ local function Deserialize()
 		
 		Consts[Idx] = Cons;
 	end;
+if game == nil or workspace == nil then
+return ThisIsTehTable
+end
 ";
 		
 		public static string VMP2 = @"
-local function Wrap(Chunk, Upvalues, Env)
+
+local function Wrap(BONANA, what, Chunk, Upvalues, Env, Boo, Cow)
 	local Instr  = Chunk[1];
 	local Proto  = Chunk[2];
 	local Params = Chunk[3];
 
-	return function(...)
-		local Instr  = Instr; 
-		local Proto  = Proto; 
+    hambanana = 'Cheese'
+
+	return function(...) -- a
+		local Instr  = Instr[1][1]; 
+		local Proto  = Proto[1][1]; 
 		local Params = Params;
 
 		local _R = _R
@@ -154,7 +191,7 @@ local function Wrap(Chunk, Upvalues, Env)
 		local Lupvals	= {};
 		local Stk		= {};
 
-		for Idx = 0, PCount do
+		for Idx = 0, PCount do -- b
 			if (Idx >= Params) then
 				Vararg[Idx - Params] = Args[Idx + 1];
 			else
@@ -169,21 +206,24 @@ local function Wrap(Chunk, Upvalues, Env)
 
 		while true do
 			Inst		= Instr[InstrPoint];
-			Enum		= Inst[OP_ENUM];";
+			Enum		= Inst[D9_OP_ENUM];";
 
-		public static string VMP3 = @"
+        public static string VMP3 = @"
 			InstrPoint	= InstrPoint + 1;
 		end;
     end;
 end;	
-return Wrap(Deserialize(), {}, GetFEnv())();
-";
+local function donothing(e)end
+Wrap(ThisIsTehTable, EEEE, Deserialize(), {}, GetFEnv(),'e','" + GetRandomAlphaNumString(1000) + @"')(); end 
+Mocha(nil)";
 		public static string VMP2_LI = @"
 local PCall = pcall
-local function Wrap(Chunk, Upvalues, Env)
+local function Wrap(BONANA, what, Chunk, Upvalues, Env, Boo, Cow)
 	local Instr = Chunk[1];
 	local Proto = Chunk[2];
 	local Params = Chunk[3];
+
+    local hambanana = 'Cheese'
 
 	return function(...)
 		local InstrPoint = 1;
@@ -219,7 +259,7 @@ local function Wrap(Chunk, Upvalues, Env)
 
 			while true do
 				Inst		= Instr[InstrPoint];
-				Enum		= Inst[OP_ENUM];";
+				Enum		= Inst[D9_OP_ENUM];";
 		
 		public static string VMP3_LI = @"
 				InstrPoint	= InstrPoint + 1;
@@ -235,7 +275,7 @@ local function Wrap(Chunk, Upvalues, Env)
 		end;
 	end;
 end;	
-return Wrap(Deserialize(), {}, GetFEnv())();
+Wrap(ThisIsTehTable, EEEE, Deserialize(), {}, GetFEnv(),'e','call')();
 ";
 	}
 }

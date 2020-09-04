@@ -9,6 +9,6 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.SetUpval;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Upvalues[Inst[OP_B]]=Stk[Inst[OP_A]];";
+			"Upvalues[Inst[D9_OP_B]]=Stk[Inst[D9_OP_A]];";
 	}
 }

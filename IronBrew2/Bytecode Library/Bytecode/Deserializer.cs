@@ -15,7 +15,7 @@ namespace IronBrew2.Bytecode_Library.Bytecode
 		private bool _bigEndian;
 		private byte _sizeNumber;
 		private byte _sizeSizeT;
-		private Encoding _fuckingLua = Encoding.GetEncoding(28591);
+		private Encoding _fuckingLua = Encoding.GetEncoding(28596); // changed this to all allah unicode
 
 		private bool _expectingSetlistData;
 

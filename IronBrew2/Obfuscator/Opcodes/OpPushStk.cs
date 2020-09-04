@@ -9,6 +9,6 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.PushStack;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Stk[Inst[OP_A]] = Stk";
+			"Stk[Inst[D9_OP_A]] = Stk";
 	}
 }

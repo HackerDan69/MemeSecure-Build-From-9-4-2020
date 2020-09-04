@@ -12,7 +12,7 @@ namespace IronBrew2.Bytecode_Library.Bytecode
 		private ObfuscationContext _context;
 		private ObfuscationSettings _settings;
 		private Random _r = new Random();
-		private Encoding _fuckingLua = Encoding.GetEncoding(28591);
+		private Encoding _fuckingLua = Encoding.GetEncoding(28596);
 
 		public Serializer(ObfuscationContext context, ObfuscationSettings settings)
 		{

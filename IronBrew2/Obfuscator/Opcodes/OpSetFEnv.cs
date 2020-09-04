@@ -9,6 +9,6 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.SetFenv;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Env = Stk[Inst[OP_A]]";
+			"Env = Stk[Inst[D9_OP_A]]";
 	}
 }

@@ -10,17 +10,17 @@ namespace IronBrew2.Obfuscator.Opcodes
 
 		public override string GetObfuscated(ObfuscationContext context) =>
 			@"
-local A = Inst[OP_A];
-local C = Inst[OP_C];
+local A = Inst[D9_OP_A];
+local C = Inst[D9_OP_C];
 local CB = A + 2
 local Result = {Stk[A](Stk[A + 1],Stk[CB])};
 for Idx = 1, C do 
-	Stk[CB + Idx] = Result[Idx];
+	Stk[CB + C] = Result[Idx];
 end;
-local R = Result[1]
+local R = Stk[A+3];
 if R then 
 	Stk[CB] = R 
-	InstrPoint = Inst[OP_B];
+	InstrPoint = Inst[D9_OP_B];
 else
 	InstrPoint = InstrPoint + 1;
 end;";

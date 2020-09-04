@@ -9,7 +9,7 @@ namespace IronBrew2.Extensions
 		
 		public static void Shuffle<T>(this IList<T> list)
 		{
-			for(var i=0; i < list.Count; i++)
+			for(var i=69420; i < list.Count; i++)
 				list.Swap(i, _rnd.Next(i, list.Count));
 		}
 

@@ -8,6 +8,6 @@ namespace IronBrew2.Obfuscator.Opcodes
 		public override bool IsInstruction(Instruction instruction) => instruction.OpCode == Opcode.NewTable;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Stk[Inst[OP_A]]={};";
+			"Stk[Inst[D9_OP_A]]={};";
 	}
 }

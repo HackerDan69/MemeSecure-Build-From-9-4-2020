@@ -9,7 +9,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.TestSet && instruction.C == 0;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"local B=Stk[Inst[OP_C]];if B then InstrPoint=InstrPoint+1;else Stk[Inst[OP_A]]=B;InstrPoint=Inst[OP_B];end;";
+			"local B=Stk[Inst[D9_OP_C]];if B then InstrPoint=InstrPoint+1;else Stk[Inst[D9_OP_A]]=B;InstrPoint=Inst[D9_OP_B];end;";
 		
 		public override void Mutate(Instruction instruction)
 		{
@@ -25,7 +25,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.TestSet && instruction.C != 0;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"local B=Stk[Inst[OP_C]];if not B then InstrPoint=InstrPoint+1;else Stk[Inst[OP_A]]=B;InstrPoint=Inst[OP_B];end;";
+			"local B=Stk[Inst[D9_OP_C]];if not B then InstrPoint=InstrPoint+1;else Stk[Inst[D9_OP_A]]=B;InstrPoint=Inst[D9_OP_B];end;";
 		
 		public override void Mutate(Instruction instruction)
 		{

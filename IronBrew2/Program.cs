@@ -9,17 +9,23 @@ using IronBrew2.Obfuscator;
 using IronBrew2.Obfuscator.Control_Flow;
 using IronBrew2.Obfuscator.Encryption;
 using IronBrew2.Obfuscator.VM_Generation;
+using System.Text.RegularExpressions;
+using IronBrew2.Extensions;
 
 namespace IronBrew2
 {
 	public static class IB2
 	{
 		public static Random Random = new Random();
-		private static Encoding _fuckingLua = Encoding.GetEncoding(28591);
+		private static Encoding _fuckingLua = Encoding.GetEncoding(28596);
 
 		public static bool Obfuscate(string path, string input, ObfuscationSettings settings, out string error)
 		{
-			try
+            
+
+
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            try
 			{
 				error = "";
 
@@ -70,7 +76,7 @@ namespace IronBrew2
 					       {
 						       FileName = $"{OS}luajit",
 						       Arguments =
-							       "../Lua/Minifier/luasrcdiet.lua --noopt-whitespace --noopt-emptylines --noopt-numbers --noopt-locals --noopt-strings --opt-comments \"" +
+							       "../Lua/Minifier/luasrcdiet.lua --maximum --noopt-whitespace --noopt-emptylines --noopt-numbers --noopt-locals --noopt-strings --opt-comments \"" +
 							       input                                                       +
 							       "\" -o \""                                                  + t0 + "\"",
 						       UseShellExecute        = false,
@@ -136,16 +142,16 @@ namespace IronBrew2
 				Console.WriteLine("Serializing...");
 				
 				//shuffle stuff
-				//lChunk.Constants.Shuffle();
-				//lChunk.Functions.Shuffle();
+				lChunk.Constants.Shuffle();
+				lChunk.Functions.Shuffle();
 
 				ObfuscationContext context = new ObfuscationContext(lChunk);
 
 				string t2 = Path.Combine(path, "t2.lua");
 				string c = new Generator(context).GenerateVM(settings);
 
-				//string byteLocal = c.Substring(null, "\n");
-				//string rest = c.Substring("\n");
+				string byteLocal = c.Substring(null, "\n");
+				string rest = c.Substring("\n");
 
 				File.WriteAllText(t2, c, _fuckingLua);
 
@@ -159,7 +165,7 @@ namespace IronBrew2
 					       {
 						       FileName = $"{OS}luajit",
 						       Arguments =
-							       "../Lua/Minifier/luasrcdiet.lua --maximum --opt-entropy --opt-emptylines --opt-eols --opt-numbers --opt-whitespace --opt-locals --noopt-strings \"" +
+							       "../Lua/Minifier/luasrcdiet.lua --maximum --opt-entropy --opt-emptylines --opt-eols --noopt-numbers --opt-whitespace --opt-locals --noopt-strings \"" +
 							       t2                                                                                                                                                +
 							       "\" -o \"" + 
 							        t3 + 
@@ -177,39 +183,12 @@ namespace IronBrew2
 				Console.WriteLine("Watermark...");
 				
 				File.WriteAllText(Path.Combine(path, "out.lua"), @"--[[
-IronBrew:tm: obfuscation; Version 2.7.0
+MemeSecure, A fork of IronBrew
 
-........................................................................................................................................................................................................
-........................................................................................................................................................................................................
-.....,,...,.............................................................................................................................................................................................
-.... MMMMM,.............................................................................................................................................................................................
-....MMMMMMM,............................................................................................................................................................................................
-....MMMMMMM,............................................................................................................................................................................................
-....,MMMMMO.............................................................................................................................................................................................
-......,.................................................................................................................................................................................................
-..................................................,,,,,,............................................Z$$.................................................................................................
-...................................................:::::............................................MMMO................................................................................................
-.....:???? ,.......:????....,.8MMMMM,.......,,,MMMMI???INMMM.,................,.?ZMMMMDI:,,.........MMM$................................................................................................
-.....MMMMM?,.......MMMMM,,.OMMMMMMMM......, 7MM+?+++++++++?+DM$ .............MMMMMMMMMMMMMM ,,......MMM$................................................................................................
-.....MMMMM?,.......MMMMM..NMMMMMMMMM.,...,$M7++++++++++++++++++M$ .........MMMMMMMMMMMMMMMMMN .,....MMM$................................................................................................
-.....MMMMM?,.......MMMMMMMMMMM8..,,,.,..,MM?++++++++++++++++++++MM,,......MMMMMMMM~,.+MMMMMMMM......MMM$................................................................................................
-.....MMMMM?,.......MMMMMMMMZ ,,.......MMMMMMMMMMMMMDZZZZMMMMMMMMMMMMM ...MMMMMM,,,....., MMMMMM.....MMM$................................,.,,............................................................
-.....MMMMM?,.......MMMMMMM:............MMMMMMMMMMMMMMMMMMMMMMMMMMMMM....MMMMMD,...........MMMMMM.,..MMM$...:MMMMMMMM:,........8MMM:.,DMMMMM,......?MMMMMMMMI.........MMMM......... MMM,.........MMMI....
-.....MMMMM?,.......MMMMMM+............,M?+MMMMMMMMMM++?DMMMMMMMMM?+M,...MMMMM,.............MMMMM,,..MMM$,NMMMMMMMMMMMM8,.,....MMMM,NMMMMMMM,..,,MMMMMMMMMMMMMM.,.....MMMM.........7MMM7.........MMM$....
-.....MMMMM?,.......MMMMMM,............,M?++MMMMMMMM7++++MMMMMMMM$??MM,,+MMMMM,.............MMMMM=...MMM$,MMMZ...,?MMMMMM,.....MMMMMMMMM,......DMMMMM:,....MMMMMN,....MMMM.........7MMM7.........MMM$....
-.....MMMMM?,.......MMMMMM.............MM+??+MMMMMMM?++++MMMMMMMD??+$M,.MMMMM?.............,MMMMM?...MMM$,M,.,...,,,,MMMMM,....MMMMMM,,,,....,MMMMM,..,....,.MDNN$....MMMM.........7MMM7.........MMM$....
-.....MMMMM?,.......MMMMM?,............MM??++???????++++++?????+++++7M..$MMMM,.............,?MMMM.,..MMM$.............OMMMM....MMMMM.........$MMMM,....... MMMMMM.,...MMMM.........7MMM7.........MMM$....
-.....MMMMM?,.......MMMMM=,............NM?+++++++++++++++++++++++++?$M..MMMMM+,............,+MMMM+,..NMN$..............MMMM+,..MMMMM.........MMMM......,?MMMMM?.,.....MMMM.........7MMM7.........MMM$....
-.....MMMMM?,.......MMMMM,,............,M+?+++++++?++++++++?+?++++++M7,,DMMMM:...............MMMM:,..MMMN.,............$MMM7...MMMM=.........MMMM....,DMMMMM..........MMMM.........7MMM7.........MMM$....
-.....MMMMM?,.......MMMMM,,............:M$?++++?MM+++++++++DM?+++++?M,,,DMMMM+,..............MMMM+,..MMMM.,............?NMM?,..ZMMM,,........MMMM.,.MMMMMM,,..........MMMM,........7MMM7.........MMM$....
-.....MMMMM?,.......MMMMM,,.............,M=++++++DMD++?++DMM+++++++M:...$MMMM.,..............MMMM ,..MMMM..............OMMM,,..OMMM,,........MMMM.,MMMM?,,......MNZ,,,MMMM.........IMMM?,........MMM?....
-.....MMMMM?,.......MMMMM,,...............M+?+++++?+ZMMMN+++?+++++M7,...$MMMM................MMMM.,..=MMMN,..........,,MNMM.,..OMMM,.........?MMMI.,M..........,MMM,.,NMMM,........IMMMI.........MMM?....
-.....MMMMM?,.......MMMMM,,................M7+?+++++++++++++++++IM,,....$MMMM,...............MMMM,....MMMMN.,......,,.MMMM,....OMMM,,........,MMMMN..........,+MMM,...,MMMN,.....,,MMMMM,,,.....MMMM.....
-.....MMMMM?,.......MMMMM,,................,MM++++?++++++++????MM.......$MMMM,...............MMMM,.....MNMMM$,......MMMMM .....OMMM,,..........MMMMM~......,,MMMM ,....MMMMM,,,..~MMMMMMM~,,,.,MMMMM.....
-.....MMMMM?,.......MMMMM,,.................,,MMD+++++++++++$MM,.,......$MMMM,...............MMMM,.....,+NMMMMMMMMMMMMMM..,....OMMM,,.......... +NMMMMMMMMMMMMMM,.......MMMMMMMMMMMMN,NMMMMMMMMMMMN,.....
-.....MMMMM?........MMMMM,,.....................::MMMMMMMMM$.,.........,ZMMMM,,..............MMMM,,......, MMMMMMMMMM:.,,......+MMM................MMMMMMMMMM7,,,......,.,MMMMMMMMN.:...MMMMMMMMM,,......
-..........,.......,,.....,.........................,,,,.,...................................................,.,,.,,,...........,,,..................,,..,,,,..............,,..,,,.......,,.,,,,.........
-........................................................................................................................................................................................................
+credits:
+D9ED - Patching stuff
+Jmm - Letting me use his string encryption
+reet15 - Making stuff easier to read
 ]]
 
 " + File.ReadAllText(t3, _fuckingLua).Replace("\n", " "), _fuckingLua);

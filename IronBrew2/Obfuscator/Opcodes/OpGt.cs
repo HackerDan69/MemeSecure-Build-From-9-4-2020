@@ -9,7 +9,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.Le && instruction.A != 0 && instruction.B <= 255 && instruction.C <= 255;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"if (Stk[Inst[OP_A]] <= Stk[Inst[OP_C]]) then InstrPoint=Inst[OP_B]; else InstrPoint=InstrPoint+1; end;";
+			"if (Stk[Inst[D9_OP_A]] <= Stk[Inst[D9_OP_C]]) then InstrPoint=Inst[D9_OP_B]; else InstrPoint=InstrPoint+1; end;";
 		
 		public override void Mutate(Instruction instruction)
 		{
@@ -26,7 +26,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.Le && instruction.A != 0 && instruction.B > 255 && instruction.C <= 255;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"if (Inst[OP_A] <= Stk[Inst[OP_C]]) then InstrPoint=Inst[OP_B]; else InstrPoint=InstrPoint+1; end;";
+			"if (Inst[D9_OP_A] <= Stk[Inst[D9_OP_C]]) then InstrPoint=Inst[D9_OP_B]; else InstrPoint=InstrPoint+1; end;";
 
 		public override void Mutate(Instruction instruction)
 		{
@@ -44,7 +44,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.Le && instruction.A != 0 && instruction.B <= 255 && instruction.C > 255;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"if (Stk[Inst[OP_A]] <= Inst[OP_C]) then InstrPoint=Inst[OP_B]; else InstrPoint=InstrPoint+1; end;";
+			"if (Stk[Inst[D9_OP_A]] <= Inst[D9_OP_C]) then InstrPoint=Inst[D9_OP_B]; else InstrPoint=InstrPoint+1; end;";
 
 		public override void Mutate(Instruction instruction)
 		{
@@ -63,7 +63,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.Le && instruction.A != 0 && instruction.B > 255 && instruction.C > 255;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"if (Inst[OP_A] <= Inst[OP_C]) then InstrPoint=Inst[OP_B]; else InstrPoint=InstrPoint+1; end;";
+			"if (Inst[D9_OP_A] <= Inst[D9_OP_C]) then InstrPoint=Inst[D9_OP_B]; else InstrPoint=InstrPoint+1; end;";
 
 		public override void Mutate(Instruction instruction)
 		{

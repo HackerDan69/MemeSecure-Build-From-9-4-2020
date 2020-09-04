@@ -9,7 +9,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.GetTable && instruction.C <= 255;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Stk[Inst[OP_A]]=Stk[Inst[OP_B]][Stk[Inst[OP_C]]];";
+			"Stk[Inst[D9_OP_A]]=Stk[Inst[D9_OP_B]][Stk[Inst[D9_OP_C]]];";
 	}
 	
 	public class OpGetTableConst : VOpcode
@@ -18,7 +18,7 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.GetTable && instruction.C > 255;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Stk[Inst[OP_A]]=Stk[Inst[OP_B]][Inst[OP_C]];";
+			"Stk[Inst[D9_OP_A]]=Stk[Inst[D9_OP_B]][Inst[D9_OP_C]];";
 
 		public override void Mutate(Instruction instruction)
 		{

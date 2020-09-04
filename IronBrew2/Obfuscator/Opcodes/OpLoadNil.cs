@@ -9,6 +9,6 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.LoadNil;
 		
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"for Idx=Inst[OP_A],Inst[OP_B] do Stk[Idx]=nil;end;";
+			"for Idx=Inst[D9_OP_A],Inst[D9_OP_B] do Stk[Idx]=nil;end;";
 	}
 }

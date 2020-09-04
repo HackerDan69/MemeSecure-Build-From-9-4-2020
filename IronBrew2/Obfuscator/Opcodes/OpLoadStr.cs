@@ -9,7 +9,7 @@ namespace IronBrew2.Obfuscator.Opcodes
         //    instruction.OpCode == Opcode.LoadConst && instruction.Chunk.Constants[instruction.B].Type == ConstantType.String;
 //
         //public override string GetObfuscated(ObfuscationContext context) =>
-        //    "Stk[Inst[OP_A]]=Strt[Inst[OP_B]];";
+        //    "Stk[Inst[D9_OP_A]]=Strt[Inst[D9_OP_B]];";
 //
         //public override void Mutate(Instruction instruction) =>
         //    instruction.B++;

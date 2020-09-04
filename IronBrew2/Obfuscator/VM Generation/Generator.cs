@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +19,13 @@ namespace IronBrew2.Obfuscator.VM_Generation
 		public Generator(ObfuscationContext context) =>
 			_context = context;
 
-		public bool IsUsed(Chunk chunk, VOpcode virt)
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+
+        public bool IsUsed(Chunk chunk, VOpcode virt)
 		{
 			bool isUsed = false;
 			foreach (Instruction ins in chunk.Instructions)
@@ -411,22 +417,94 @@ namespace IronBrew2.Obfuscator.VM_Generation
 			byte[] bs = new Serializer(_context, settings).SerializeLChunk(_context.HeadChunk);
 			
 			vm += @"
-local Byte         = string.byte;
-local Char         = string.char;
-local Sub          = string.sub;
-local Concat       = table.concat;
+local Mocha = function(Coffee)
+while true do
+break;
+end
+local Allahs_car = [[Can I have a joe?]]
+local dingling = getfenv()['\115\116\114\105\110\103']
+local Byte         = dingling.byte;
+local Char         = dingling.char;
+local Sub          = dingling.sub;
 local Insert       = table.insert;
 local LDExp        = math.ldexp;
+local hambanana;
 local GetFEnv      = getfenv or function() return _ENV end;
+local xyy          = function(dong)
+return dong
+end
 local Setmetatable = setmetatable;
 local Select       = select;
+local been = Select;
+local subcontainment = Sub;
+local car = 'allah'
+local Cocomelon = table.concat
 
+local Concat       = function(t,l)
+    if not l then l = '' end;
+    local final = ''
+    for i = 1, #t do
+        if i == #t then  
+            final = final .. t[i]
+            break
+        end
+        final = final .. t[i] .. l
+    end
+    return final end
+if not DeepPrint == nil then
+return error('n')
+end
+local base64bytes = {['A']=0,['B']=1,['C']=2,['D']=3,['E']=4,['F']=5,['G']=6,['H']=7,['I']=8,['J']=9,['K']=10,['L']=11,['M']=12,['N']=13,['O']=14,['P']=15,['Q']=16,['R']=17,['S']=18,['T']=19,['U']=20,['V']=21,['W']=22,['X']=23,['Y']=24,['Z']=25,['a']=26,['b']=27,['c']=28,['d']=29,['e']=30,['f']=31,['g']=32,['h']=33,['i']=34,['j']=35,['k']=36,['l']=37,['m']=38,['n']=39,['o']=40,['p']=41,['q']=42,['r']=43,['s']=44,['t']=45,['u']=46,['v']=47,['w']=48,['x']=49,['y']=50,['z']=51,['0']=52,['1']=53,['2']=54,['3']=55,['4']=56,['5']=57,['6']=58,['7']=59,['8']=60,['9']=61,['-']=62,['_']=63,['=']=nil}
+local function konkshredernigga(x,b)
+	return (math.fmod(x, 2^b) - math.fmod(x, 2^(b-1)) > 0)
+end
+local function lsh(value,shift)
+	return (value*(2^shift)) % 256
+end
+
+-- shift right
+local function rsh(value,shift)
+	return math.floor(value/2^shift) % 256
+end
+
+-- logic OR for number values
+local function lor(x,y)
+	result = 0
+	for p=1,8 do result = result + (((konkshredernigga(x,p) or konkshredernigga(y,p)) == true) and 2^(p-1) or 0) end
+	return result
+end
+
+-- encryption table
+local base64chars = {[0]='A',[1]='B',[2]='C',[3]='D',[4]='E',[5]='F',[6]='G',[7]='H',[8]='I',[9]='J',[10]='K',[11]='L',[12]='M',[13]='N',[14]='O',[15]='P',[16]='Q',[17]='R',[18]='S',[19]='T',[20]='U',[21]='V',[22]='W',[23]='X',[24]='Y',[25]='Z',[26]='a',[27]='b',[28]='c',[29]='d',[30]='e',[31]='f',[32]='g',[33]='h',[34]='i',[35]='j',[36]='k',[37]='l',[38]='m',[39]='n',[40]='o',[41]='p',[42]='q',[43]='r',[44]='s',[45]='t',[46]='u',[47]='v',[48]='w',[49]='x',[50]='y',[51]='z',[52]='0',[53]='1',[54]='2',[55]='3',[56]='4',[57]='5',[58]='6',[59]='7',[60]='8',[61]='9',[62]='-',[63]='_'}
+
+local function encodebase64a(data)
+	local bytes = {}
+	local result = ''
+	for spos=0,string.len(data)-1,3 do
+		for byte=1,3 do bytes[byte] = string.byte(string.sub(data,(spos+byte))) or 0 end
+		result = string.format('%s%s%s%s%s',result,base64chars[rsh(bytes[1],2)],base64chars[lor(lsh((bytes[1] % 4),4), rsh(bytes[2],4))] or ' = ',((#data-spos) > 1) and base64chars[lor(lsh(bytes[2] % 16,2), rsh(bytes[3],6))] or ' = ',((#data-spos) > 2) and base64chars[(bytes[3] % 64)] or ' = ')
+
+    end
+	return result
+end
+local function decodebase64(data)
+	local chars = {}
+	local result=''
+	for dpos=0,string.len(data)-1,4 do
+		for char=1,4 do chars[char] = base64bytes[(string.sub(data,(dpos+char),(dpos+char)) or '=')] end
+		result = string.format('%s%s%s%s',result,string.char(lor(lsh(chars[1],2), rsh(chars[2],4))),(chars[3] ~= nil) and string.char(lor(lsh(chars[2],4), rsh(chars[3],2))) or '',(chars[4] ~= nil) and string.char(lor(lsh(chars[3],6) % 192, (chars[4]))) or '')
+	end
+	return result
+end
 local Unpack = unpack or table.unpack;
-local ToNumber = tonumber;";
+local ToNumber = tonumber;
+local function donothing(e)
+end
+";
 
 			if (settings.BytecodeCompress)
 			{
-				vm += "local function decompress(b)local c,d,e=\"\",\"\",{}local f=256;local g={}for h=0,f-1 do g[h]=Char(h)end;local i=1;local function k()local l=ToNumber(Sub(b, i,i),36)i=i+1;local m=ToNumber(Sub(b, i,i+l-1),36)i=i+l;return m end;c=Char(k())e[1]=c;while i<#b do local n=k()if g[n]then d=g[n]else d=c..Sub(c, 1,1)end;g[f]=c..Sub(d, 1,1)e[#e+1],c,f=d,d,f+1 end;return table.concat(e)end;";
+				vm += "local ThisIsTehTable = {[1]='What you just did is very gay, please go to time out and never return lmao\\n\\n'} local function decompress(b)local c,d,e=\"\",\"\",{}local f=256;local g={}for h=0,f-1 do g[h]=Char(h)end;local i=1;local function k()local l=ToNumber(Sub(b, i,i),36)i=i+1;local m=ToNumber(Sub(b, i,i+l-1),36)i=i+l;return m end;c=Char(k())e[1]=c;while i<#b do local n=k()if g[n]then d=g[n]else d=c..Sub(c, 1,1)end;g[f]=c..Sub(d, 1,1)e[#e+1],c,f=d,d,f+1 end;return Concat(e)end;";
 				vm += "local ByteString=decompress('" + CompressedToString(Compress(bs)) + "');\n";
 			}
 			else
@@ -457,7 +535,9 @@ local ToNumber = tonumber;";
 			ComputeConstants(_context.HeadChunk);
 
 			vm += VMStrings.VMP1
-				.Replace("XOR_KEY", _context.PrimaryXorKey.ToString())
+                // changed this for confusion
+
+				.Replace("XOR_KEY", Base64Encode(_context.PrimaryXorKey.ToString()))
 				.Replace("CONST_BOOL", _context.ConstantMapping[1].ToString())
 				.Replace("CONST_FLOAT", _context.ConstantMapping[2].ToString())
 				.Replace("CONST_STRING", _context.ConstantMapping[3].ToString());
@@ -486,20 +566,20 @@ local ToNumber = tonumber;";
 										}};
 	
 										if (Type == 0) then 
-											Inst[OP_B] = gBits16(); 
-											Inst[OP_C] = gBits16();
+											Inst[D9_OP_B] = gBits16(); 
+											Inst[D9_OP_C] = gBits16();
 										elseif(Type==1) then 
-											Inst[OP_B] = gBits32();
+											Inst[D9_OP_B] = gBits32();
 										elseif(Type==2) then 
-											Inst[OP_B] = gBits32() - (2 ^ 16)
+											Inst[D9_OP_B] = gBits32() - (2 ^ 16)
 										elseif(Type==3) then 
-											Inst[OP_B] = gBits32() - (2 ^ 16)
-											Inst[OP_C] = gBits16();
+											Inst[D9_OP_B] = gBits32() - (2 ^ 16)
+											Inst[D9_OP_C] = gBits16();
 										end;
 	
-										if (gBit(Mask, 1, 1) == 1) then Inst[OP_A] = Consts[Inst[OP_A]] end
-										if (gBit(Mask, 2, 2) == 1) then Inst[OP_B] = Consts[Inst[OP_B]] end
-										if (gBit(Mask, 3, 3) == 1) then Inst[OP_C] = Consts[Inst[OP_C]] end
+										if (gBit(Mask, 1, 1) == 1) then Inst[D9_OP_A] = Consts[Inst[D9_OP_A]] end
+										if (gBit(Mask, 2, 2) == 1) then Inst[D9_OP_B] = Consts[Inst[D9_OP_B]] end
+										if (gBit(Mask, 3, 3) == 1) then Inst[D9_OP_C] = Consts[Inst[D9_OP_C]] end
 										
 										Instrs[Idx] = Inst;
 									end
@@ -584,11 +664,11 @@ local ToNumber = tonumber;";
 
 			vm += GetStr(Enumerable.Range(0, virtuals.Count).ToList());
 			vm += settings.PreserveLineInfo ? VMStrings.VMP3_LI : VMStrings.VMP3;
-
-			vm = vm.Replace("OP_ENUM", "1")
-				.Replace("OP_A", "2")
-				.Replace("OP_B", "3")
-				.Replace("OP_C", "4");
+            // changed this
+			vm = vm.Replace("D9_OP_ENUM", "0xD9ED/0xD9ED*0x01")
+				.Replace("D9_OP_A", "xyy(0xD9ED/0xD9ED*0x02)")
+				.Replace("D9_OP_B", "xyy(0xD9ED/0xD9ED*0x03)")
+				.Replace("D9_OP_C", "xyy(0xD9ED/0xD9ED*0x04)");
 
 			
 			return vm;

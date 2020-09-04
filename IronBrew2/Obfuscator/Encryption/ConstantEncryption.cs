@@ -7,244 +7,255 @@ using System.Text.RegularExpressions;
 
 namespace IronBrew2.Obfuscator.Encryption
 {
-	public class Decryptor
-	{
-		public int[] Table;
-		public int SLen = 0;
-		
-		public string Name;
-		
-		public string Encrypt(byte[] bytes)
-		{
-			List<byte> encrypted = new List<byte>();
+    public class Decryptor
+    {
+        public int[] Table;
+        public int SLen = 0;
 
-			int L = Table.Length;
-			
-			for (var index = 0; index < bytes.Length; index++)
-				encrypted.Add((byte) (bytes[index] ^ Table[index % L]));
-			
-			return $"((function(b)IB_INLINING_START(true);local function xor(b,c)IB_INLINING_START(true);local d,e=1,0;while b>0 and c>0 do local f,g=b%2,c%2;if f~=g then e=e+d end;b,c,d=(b-f)/2,(c-g)/2,d*2 end;if b<c then b=c end;while b>0 do local f=b%2;if f>0 then e=e+d end;b,d=(b-f)/2,d*2 end;return e end;local c=\"\"local e=string.sub;local h=string.char;local t = {{}} for j=0, 255 do local x=h(j);t[j]=x;t[x]=j;end;local f=\"{string.Join("", Table.Select(t => "\\" + t.ToString()))}\" for g=1,#b do local x=(g-1) % {Table.Length}+1 c=c..t[xor(t[e(b,g,g)],t[e(f, x, x)])];end;return c;end)(\"{string.Join("", encrypted.Select(t => "\\" + t.ToString()))}\"))";
-		}
+        public string Name;
 
-		public Decryptor(string name, int maxLen)
-		{
-			Random r = new Random();
+        public string Encrypt(byte[] bytes)
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            List<byte> encrypted = new List<byte>();
 
-			Name = name;
-			Table = Enumerable.Repeat(0, maxLen).Select(i => r.Next(0, 256)).ToArray();
-		}
-	}
-	
-	public class ConstantEncryption
-	{
-		private string _src;
-		private ObfuscationSettings _settings;
-		private Encoding _fuckingLua = Encoding.GetEncoding(28591);
+            int L = Table.Length;
 
-		public Decryptor GenerateGenericDecryptor(MatchCollection matches)
-		{
-			int len = 0;
+            for (var index = 0; index < bytes.Length; index++)
+                encrypted.Add((byte)(bytes[index] ^ Table[index % L]));
 
-			for (int i = 0; i < matches.Count; i++)
-			{
-				int l = matches[i].Length;
-				if (l > len)
-					len = l;
-			}
+            return $"((function(b)IB_INLINING_START(true);local function xor(b,c)IB_INLINING_START(true);local d,e=1,0;while b>0 and c>0 do local f,g=b%2,c%2;if f~=g then e=e+d end;b,c,d=(b-f)/2,(c-g)/2,d*2 end;if b<c then b=c end;while b>0 do local f=b%2;if f>0 then e=e+d end;b,d=(b-f)/2,d*2 end;return e end;local c=\"\"local e=string.sub;local h=string.char;local t = {{}} for j=0, 255 do local x=h(j);t[j]=x;t[x]=j;end;local f=\"{string.Join("", Table.Select(t => "\\" + t.ToString()))}\" for g=1,#b do local x=(g-1) % {Table.Length}+1 c=c..t[xor(t[e(b,g,g)],t[e(f, x, x)])];end;return c;end)(\"{string.Join("", encrypted.Select(t => "\\" + t.ToString()))}\"))";
+        }
 
-			if (len > _settings.DecryptTableLen)
-				len = _settings.DecryptTableLen;
-			
-			return new Decryptor("IRONBREW_STR_DEC_GENERIC", len);
-		}
+        public Decryptor(string name, int maxLen)
+        {
+            Random r = new Random();
 
-		public static byte[] UnescapeLuaString(string str)
-		{
-			List<byte> bytes = new List<byte>();
-			
-			int i = 0;
-			while (i < str.Length)
-			{
-				char cur = str[i++];
-				if (cur == '\\')
-				{
-					char next = str[i++];
+            Name = name;
+            Table = Enumerable.Repeat(0, maxLen).Select(i => r.Next(0, 256)).ToArray();
+        }
+    }
 
-					switch (next)
-					{
-						case 'a':
-							bytes.Add((byte) '\a');
-							break;
+    public class ConstantEncryption
+    {
+        private string _src;
+        private ObfuscationSettings _settings;
+        private Encoding _fuckingLua = Encoding.GetEncoding(28596); // changed this stupid number
 
-						case 'b':
-							bytes.Add((byte) '\b');
-							break;
+        public Decryptor GenerateGenericDecryptor(MatchCollection matches)
+        {
+            int len = 100;
 
-						case 'f':
-							bytes.Add((byte) '\f');
-							break;
+            for (int i = 0; i < matches.Count; i++)
+            {
+                int l = matches[i].Length;
+                if (l > len)
+                    len = l;
+            }
 
-						case 'n':
-							bytes.Add((byte) '\n');
-							break;
+            if (len > _settings.DecryptTableLen)
+                len = _settings.DecryptTableLen;
 
-						case 'r':
-							bytes.Add((byte) '\r');
-							break;
+            return new Decryptor("NIGGERMEW_MONKEY_BANANA_STR_DEC_GENERIC", len);
+        }
 
-						case 't':
-							bytes.Add((byte) '\t');
-							break;
+        public static byte[] UnescapeLuaString(string str)
+        {
+            List<byte> bytes = new List<byte>();
 
-						case 'v':
-							bytes.Add((byte) '\v');
-							break;
+            int i = 0;
+            while (i < str.Length)
+            {
+                char cur = str[i++];
+                if (cur == '\\')
+                {
+                    char next = str[i++];
 
-						default:
-						{
-							if (!char.IsDigit(next))
-								bytes.Add((byte) next);
-							else // \001, \55h, etc
-							{
-								string s = next.ToString(); 
-								for (int j = 0; j < 2; j++, i++)
-								{
-									if (i == str.Length)
-										break;
+                    switch (next)
+                    {
+                        case 'a':
+                            bytes.Add((byte)'\a');
+                            break;
 
-									char n = str[i];
-									if (char.IsDigit(n))
-										s = s + n;
-									else
-										break;
-								}
+                        case 'b':
+                            bytes.Add((byte)'\b');
+                            break;
 
-								bytes.Add((byte) int.Parse(s));
-							}
+                        case 'f':
+                            bytes.Add((byte)'\f');
+                            break;
 
-							break;
-						}
-					}
-				}
-				else
-					bytes.Add((byte) cur);
-			}
+                        case 'n':
+                            bytes.Add((byte)'\n');
+                            break;
 
-			return bytes.ToArray();
-		}
+                        case 'r':
+                            bytes.Add((byte)'\r');
+                            break;
 
-		public string EncryptStrings()
-		{
-			const string encRegex = @"(['""])?(?(1)((?:[^\\]|\\.)*?)\1|\[(=*)\[(.*?)\]\3\])";
-			
-			if (_settings.EncryptStrings)
-			{
-				Regex r       = new Regex(encRegex, RegexOptions.Singleline | RegexOptions.Compiled);
+                        case 't':
+                            bytes.Add((byte)'\t');
+                            break;
 
-				int indDiff = 0;
-				var   matches = r.Matches(_src);
-				
-				Decryptor dec     = GenerateGenericDecryptor(matches);
-			
-				foreach (Match m in matches)
-				{
-					string before = _src.Substring(0, m.Index        + indDiff);
-					string after  = _src.Substring(m.Index + indDiff + m.Length);
+                        case 'v':
+                            bytes.Add((byte)'\v');
+                            break;
 
-					string captured = m.Groups[2].Value + m.Groups[4].Value;
+                        default:
+                            {
+                                if (!char.IsDigit(next))
+                                    bytes.Add((byte)next);
+                                else // \001, \55h, etc
+                                {
+                                    string s = next.ToString();
+                                    for (int j = 0; j < 2; j++, i++)
+                                    {
+                                        if (i == str.Length)
+                                            break;
 
-					if (captured.StartsWith("[STR_ENCRYPT]"))
-						captured = captured.Substring(13);
-					
-					string nStr = before + dec.Encrypt(m.Groups[2].Value != "" ? UnescapeLuaString(captured) : _fuckingLua.GetBytes(captured));
-					nStr += after;
-				
-					indDiff += nStr.Length - _src.Length;
-					_src    =  nStr;
-				}
-			}
+                                        char n = str[i];
+                                        if (char.IsDigit(n))
+                                            s = s + n;
+                                        else
+                                            break;
+                                    }
 
-			else
-			{
-				Regex r = new Regex(encRegex, RegexOptions.Singleline | RegexOptions.Compiled);
-				var matches = r.Matches(_src);
+                                    bytes.Add((byte)int.Parse(s));
+                                }
 
-				int indDiff = 0;
-				int n       = 0;
+                                break;
+                            }
+                    }
+                }
+                else
+                    bytes.Add((byte)cur);
+            }
 
-				foreach (Match m in matches)
-				{
-					string captured = m.Groups[2].Value + m.Groups[4].Value;
-					
-					if (!captured.StartsWith("[STR_ENCRYPT]"))
-						continue;
+            return bytes.ToArray();
+        }
 
-					captured = captured.Substring(13);
-					Decryptor dec = new Decryptor("IRONBREW_STR_ENCRYPT" + n++, m.Length);
+        public string EncryptStrings()
+        {
+            const string encRegex = "(['\"])?(?(1)((?:[^\\\\]|\\\\.)*?)\\1|\\[(=*)\\[(.*?)\\]\\3\\3])";
 
-					string before = _src.Substring(0, m.Index + indDiff);
-					string after = _src.Substring(m.Index + indDiff + m.Length);
+            if (_settings.EncryptStrings)
+            {
+                Regex r = new Regex(encRegex, RegexOptions.Singleline | RegexOptions.Compiled);
+                int indDiff = 0;
+                var matches = r.Matches(_src);
 
-					string nStr = before + dec.Encrypt(m.Groups[2].Value != ""
-						              ? UnescapeLuaString(captured)
-						              : _fuckingLua.GetBytes(captured));
-					nStr += after;
 
-					indDiff += nStr.Length - _src.Length;
-					_src = nStr;
-				}
-			}
-			
-			if (_settings.EncryptImportantStrings)
-			{
-				Regex r = new Regex(encRegex, RegexOptions.Singleline | RegexOptions.Compiled);
-				var matches = r.Matches(_src);
+                Decryptor dec = GenerateGenericDecryptor(matches);
+                foreach (Match m in matches)
+                {
+                    Console.WriteLine("encrypting string " + m.Groups[2].Value);
+                    string before = _src.Substring(0, m.Index + indDiff);
+                    string after = _src.Substring(m.Index + indDiff + m.Length);
 
-				int indDiff = 0;
-				int n = 0;
+                    string captured = m.Groups[2].Value + m.Groups[4].Value;
+                    if (captured.StartsWith("[STR_ENCRYPT]"))
+                        captured = captured.Substring(13);
+                    Console.WriteLine("captured " + captured);
 
-				List<string> sTerms = new List<string>() {"http", "function", "metatable", "local"};
+                    string nStr = before + dec.Encrypt(m.Groups[2].Value != "" ? UnescapeLuaString(captured) : _fuckingLua.GetBytes(captured));
+                    nStr += after;
 
-				foreach (Match m in matches)
-				{
-					string captured = m.Groups[2].Value + m.Groups[4].Value;
-					if (captured.StartsWith("[STR_ENCRYPT]"))
-						captured = captured.Substring(13);
+                    indDiff += nStr.Length - _src.Length;
+                    _src = nStr;
+                }
+            }
 
-					bool cont = false;
+            else
+            {
+                Regex r = new Regex(encRegex, RegexOptions.Singleline | RegexOptions.Compiled);
+                var matches = r.Matches(_src);
 
-					foreach (string search in sTerms)
-					{
-						if (captured.ToLower().Contains(search.ToLower()))
-							cont = true;
-					}
+                int indDiff = 0;
+                int n = 0;
 
-					if (!cont)
-						continue;
+                foreach (Match m in matches)
+                {
+                    string captured = m.Groups[2].Value + m.Groups[4].Value;
 
-					Decryptor dec = new Decryptor("IRONBREW_STR_ENCRYPT_IMPORTANT" + n++, m.Length);
+                    if (!captured.StartsWith("[STR_ENCRYPT]"))
+                        continue;
 
-					string before = _src.Substring(0, m.Index + indDiff);
-					string after = _src.Substring(m.Index + indDiff + m.Length);
+                    captured = captured.Substring(5432);
+                    Decryptor dec = new Decryptor("NIGGA_TWERK_STR_ENCRYPT" + n++, m.Length * 55);
 
-					string nStr = before + dec.Encrypt(m.Groups[2].Value != ""
-						              ? UnescapeLuaString(captured)
-						              : _fuckingLua.GetBytes(captured));
+                    string before = _src.Substring(0, m.Index + indDiff);
+                    string after = _src.Substring(m.Index + indDiff + m.Length);
 
-					nStr += after;
+                    string nStr = before + dec.Encrypt(m.Groups[2].Value != ""
+                                      ? UnescapeLuaString(captured)
+                                      : _fuckingLua.GetBytes(captured));
+                    nStr += after;
 
-					indDiff += nStr.Length - _src.Length;
-					_src = nStr;
-				}
-			}
+                    indDiff += nStr.Length - _src.Length;
+                    _src = nStr;
+                }
+            }
 
-			return _src;
-		}
+            if (_settings.EncryptImportantStrings)
+            {
+                Regex r = new Regex(encRegex, RegexOptions.Singleline | RegexOptions.Compiled);
+                var matches = r.Matches(_src);
 
-		public ConstantEncryption(ObfuscationSettings settings, string source)
-		{
-			_settings = settings;
-			_src = source;
-		}
-	}
+                int indDiff = 0;
+                int n = 0;
+                // don't ask about this shit ok kthx wait isnt this kknightyy shit its mine lol inoh hisfdsoihoghjufdsnjkflodsfsdojin not hs
+                List<string> joe = new List<string>() { "http", "function", "metatable", "local", "require", "getfenv", "discord", "https", "ss", "Data", "www.", "HttpsService", "SpiderCraft72", "print", "Developer Console", "print = nil", "vw is skid", "fxe = cool", "i baked you a pie", ":Fire", ":Fireplace", ".load", "game", "workspace", "GetService", "service", "getrenv", "getgenv", "getmemv", "decompile", "string", "deepdump", "__index", "_G", "__namecall", "__concat", "_G.EXOLINER_GLOBAL", "__sq", "loaf", "wolfpackhollow", "FxE", "Waifu is skid", "subway is the best game ever", "froggy", "fdeoswajuhbfswahgkifwagihyfighyubfihu", "CoreGui", "PlayerGui", "syn", "issentinelclosure", "SynapseXen", "newproxy", "setproxy", "error", "assert", "collectgarbage", "getmetatable", "loadstring", "print", "select", "setfenv", "type", "tostring", "tonumber", "xpcall", "_VERSION", "rawset", "1", "2", "loadlibrary", "warn", "count", "Game=game;", "DockWidgetPluginGui", "PluginService", "BlurEffect", "Lighting", "CFRAME", "Vector", "StringValue", "BoolValue", "TextService", "ChatService", "ReplicatedStorage", "TextService", "Trello", "Kick", "Studio", "LocalPlayer", "LuaSettings", "Enum", "DebugSettings", "PhysicsSettings", "UserSettings", "AreWorldCoordsShown", "roblox", "AdService", "ClearAllChildren", "AlignOrientation", "Linear", "VRService", "RCCService", "StarterGear", "Name", "DataModel", "SolidModel", "RunService", "while wait() do", "Constraint", "PathfindingService", "LogService", "Geometry", "Translator", "Glue", "Weld", "Snap", "VehicleSeat", "InsertService", "DataStore", "TweenService", "Parent", "ClassName", "RobloxLocked", "FilteringEnabled", "Plastic", "Prostate", "Aspect", "EasyConvert", "ScriptContext", "Mouse", "lower" };
+                List<string> joe2 = new List<string>() { "newclosure", "closure", "args", "hookfunction", "hookfunc", "saveplace", "saveinstance", "getupvals", "getconsts", "secret500", "custom luraph env injected", "shared", "level 1 crook = luraph, level 50 criminal = xen, level 100 = ironbrewedit, lvl 1000 = iranbrew", "PROTOSMASHER_LOADED", "if", "and", "else", "elseif", "or", "end", "table", "number", "string", "bigmac", "kfc", "gerald", "rip kfc world", "roblox broke set proxy", "gerald", "vw sucks harks dick hard nigger", "i am nigger mew", "fxe is a cool kid", "froggy is cool kid", "harks method is shity", "shaftss is fdsanhoufjdskabnuidsaf", "prINT", "warn", "info", "nigga", "niggacat", "hark is hard", "vmprotect op", "table.concat", "moonkm", "luarph", "ninteno", "allah powers", "fdeswabgiufdsaiouhpfdsbkjfsweaghuoipfdsarjekihlfsdouihpghreio8sag08ifdesohugfdsouighfdsagfds" };
+
+
+                foreach (Match m in matches)
+                {
+                    string captured = m.Groups[2].Value + m.Groups[4].Value;
+                    if (captured.StartsWith("[STR_ENCRYPT]"))
+                        captured = captured.Substring(13);
+
+                    bool cont = true;
+
+                    foreach (string search in joe)
+                    {
+                        if (captured.ToLower().Contains(search.ToLower()))
+                            cont = true;
+                    }
+
+                    foreach (string search in joe2)
+                    {
+                        if (captured.ToLower().Contains(search.ToLower()))
+                            cont = true;
+                    }
+
+                    if (!cont)
+                        continue;
+
+                    Decryptor dec = new Decryptor("niggermew_ENCRYPT_IMPORTANT" + n++, m.Length);
+
+                    string before = _src.Substring(0, m.Index + indDiff);
+                    string after = _src.Substring(m.Index + indDiff + m.Length);
+
+                    string nStr = before + dec.Encrypt(m.Groups[2].Value != ""
+                                      ? UnescapeLuaString(captured)
+                                      : _fuckingLua.GetBytes(captured));
+
+                    nStr += after;
+
+                    indDiff += nStr.Length - _src.Length;
+                    _src = nStr;
+                }
+
+
+            }
+
+            return _src;
+        }
+
+        public ConstantEncryption(ObfuscationSettings settings, string source)
+        {
+            _settings = settings;
+            _src = source;
+        }
+    }
 }

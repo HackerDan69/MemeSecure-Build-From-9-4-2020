@@ -9,6 +9,6 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.Not;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Stk[Inst[OP_A]]=(not Stk[Inst[OP_B]]);";
+			"Stk[Inst[D9_OP_A]]=(not Stk[Inst[D9_OP_B]]);";
 	}
 }

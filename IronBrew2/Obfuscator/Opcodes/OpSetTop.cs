@@ -10,6 +10,6 @@ namespace IronBrew2.Obfuscator.Opcodes
 			instruction.OpCode == Opcode.SetTop;
 
 		public override string GetObfuscated(ObfuscationContext context) =>
-			"Top=Inst[OP_A];";
+			"Top=Inst[D9_OP_A];";
 	}
 }

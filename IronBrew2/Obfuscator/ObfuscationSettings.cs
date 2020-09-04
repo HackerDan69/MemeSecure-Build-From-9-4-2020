@@ -16,7 +16,7 @@ namespace IronBrew2.Obfuscator
 		
 		public ObfuscationSettings()
 		{
-			EncryptStrings = false;
+			EncryptStrings = true;
 			EncryptImportantStrings = false;
 			ControlFlow = true;
 			BytecodeCompress = true;
@@ -24,9 +24,9 @@ namespace IronBrew2.Obfuscator
 			PreserveLineInfo = false;
 			Mutate = true;
 			SuperOperators = true;
-			MaxMegaSuperOperators = 120;
-			MaxMiniSuperOperators = 120;
-			MaxMutations = 200;
+			MaxMegaSuperOperators = 694201337;
+			MaxMiniSuperOperators = 694201337;
+			MaxMutations = 694201337;
 		}
 	}
 }
